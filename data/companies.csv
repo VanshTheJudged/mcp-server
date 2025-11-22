@@ -1,0 +1,11 @@
+company_name,industry,annual_revenue_usd,employee_count,founder,country,year_founded,website
+TechNova,Software,15000000,120,Arjun Mehra,India,2012,https://technova.com
+GreenLeaf Organics,Food & Agriculture,4200000,35,,USA,2018,https://greenleaf.com
+AeroSky Dynamics,Aerospace,98000000,540,Hiro Tanaka,Japan,2005,https://aeroskydynamics.jp
+HealthSphere Medical,Healthcare,25000000,210,Sara Kovac,Canada,2010,https://healthsphere.ca
+CryptoForge Labs,Blockchain,7300000,,Luis Romero,Spain,2019,
+EcoRide Mobility,Automotive,120000000,900,Elena Schmidt,Germany,2008,https://ecoride.de
+PixelWorks Studios,Entertainment,3500000,22,,UK,2020,https://pixelworks.uk
+DataSense Analytics,Data Science,17000000,150,Mehak Singh,India,2016,https://datasense.ai
+SunGrid Energy,Renewable Energy,54000000,300,,Australia,2014,https://sungrid.com.au
+OceanWare Shipping,Logistics,22000000,430,Ryan Patel,USA,1998,https://oceanwarelogistics.com
