@@ -4,7 +4,9 @@
     "csv-parser": "^3.2.0",
     "express": "^5.1.0",
     "fs": "^0.0.1-security",
-    "node": "^25.2.1"
+    "node": "^25.2.1",
+    "node-fetch": "^3.3.2",
+    "ws": "^8.18.3"
   },
   "name": "mcp-server",
   "version": "1.0.0",

@@ -1,0 +1,26 @@
+{
+  "name": "company-mcp-server",
+  "version": "1.0.0",
+  "description": "A company filtering MCP server.",
+  "server": {
+    "command": "node",
+    "args": ["index.js"],
+    "env": {
+      "CSV_PATH": "./data/companies.csv"
+    }
+  },
+  "transport": {
+    "type": "http",
+    "url": "https://mcp-server-whjd.onrender.com"
+  },
+  "tools": [
+    {
+      "name": "search",
+      "description": "Search companies with filters"
+    },
+    {
+      "name": "get-company",
+      "description": "Get company by name or id"
+    }
+  ]
+}
