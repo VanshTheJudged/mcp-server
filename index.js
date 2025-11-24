@@ -44,6 +44,127 @@ app.get("/health", (req, res) => {
   });
 });
 
+// Serve OpenAPI spec
+app.get("/openapi.yaml", (req, res) => {
+  const filePath = path.join(__dirname, "openapi.yaml");
+  
+  if (!fs.existsSync(filePath)) {
+    return res.status(404).send("OpenAPI spec not found");
+  }
+  
+  res.setHeader('Content-Type', 'application/x-yaml');
+  res.sendFile(filePath);
+});
+
+// Also serve as JSON
+app.get("/openapi.json", (req, res) => {
+  res.json({
+    openapi: "3.1.0",
+    info: {
+      title: "Company Search API",
+      description: "API for searching and filtering company data",
+      version: "1.0.0"
+    },
+    servers: [
+      {
+        url: "https://mcp-server-whjd.onrender.com",
+        description: "Production server"
+      }
+    ],
+    paths: {
+      "/tools/call": {
+        post: {
+          summary: "Execute a tool",
+          operationId: "callTool",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["name"],
+                  properties: {
+                    name: {
+                      type: "string",
+                      enum: ["search", "get_company"]
+                    },
+                    arguments: {
+                      type: "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            "200": {
+              description: "Successful response",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      content: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            type: {
+                              type: "string"
+                            },
+                            text: {
+                              type: "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    required: ["content"]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/get-company": {
+        get: {
+          summary: "Get company by name",
+          operationId: "getCompanyByName",
+          parameters: [
+            {
+              name: "name",
+              in: "query",
+              required: true,
+              schema: {
+                type: "string"
+              }
+            }
+          ],
+          responses: {
+            "200": {
+              description: "Company found",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      company: {
+                        type: "object"
+                      }
+                    },
+                    required: ["company"]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  });
+});
+
 /* ------------------------------
     MCP MANIFEST
 --------------------------------*/
@@ -153,10 +274,36 @@ app.get("/tools", (req, res) => {
 app.post("/tools/call", (req, res) => {
   const { name, arguments: args } = req.body;
 
-  console.log("Tool called:", name, "with args:", JSON.stringify(args));
+  // DEBUG LOGGING
+  console.log("========================================");
+  console.log("🔧 TOOL CALL RECEIVED");
+  console.log("========================================");
+  console.log("Full request body:", JSON.stringify(req.body, null, 2));
+  console.log("Tool name:", name);
+  console.log("Tool name type:", typeof name);
+  console.log("Tool args:", JSON.stringify(args, null, 2));
+  console.log("========================================");
+
+  // Handle missing or invalid name
+  if (!name) {
+    console.error("❌ ERROR: Tool name is missing");
+    return res.status(400).json({
+      content: [
+        {
+          type: "text",
+          text: "Error: Tool name is required. Request body: " + JSON.stringify(req.body)
+        }
+      ],
+      isError: true
+    });
+  }
 
   if (name === "search") {
+    console.log("✅ Executing 'search' tool");
     const { filters = [], limit = 50, offset = 0, sort = null } = args || {};
+    
+    console.log("Filters:", filters);
+    console.log("Limit:", limit);
     
     let matched = companies.filter((row) => applyFilters(row, filters));
     matched = matched.map((r) => fillMissingFields(r));
@@ -173,6 +320,8 @@ app.post("/tools/call", (req, res) => {
 
     const page = matched.slice(offset, offset + limit);
     
+    console.log(`✅ Returning ${page.length} of ${matched.length} results`);
+    
     return res.json({
       content: [
         {
@@ -188,6 +337,7 @@ app.post("/tools/call", (req, res) => {
   } 
   
   if (name === "get_company") {
+    console.log("✅ Executing 'get_company' tool");
     const { name: companyName, id } = args || {};
     let found;
 
@@ -203,6 +353,7 @@ app.post("/tools/call", (req, res) => {
     }
 
     if (!found) {
+      console.log("❌ Company not found");
       return res.json({
         content: [
           {
@@ -214,6 +365,8 @@ app.post("/tools/call", (req, res) => {
       });
     }
 
+    console.log("✅ Company found:", found.company_name);
+    
     return res.json({
       content: [
         {
@@ -225,11 +378,14 @@ app.post("/tools/call", (req, res) => {
   }
   
   // Tool not found
-  res.status(404).json({
+  console.error("❌ ERROR: Tool not found. Received name:", name);
+  console.error("Available tools: search, get_company");
+  
+  return res.status(400).json({
     content: [
       {
         type: "text",
-        text: `Tool '${name}' not found`
+        text: `Tool '${name}' not found. Available tools: search, get_company. Received request: ${JSON.stringify(req.body)}`
       }
     ],
     isError: true
@@ -293,7 +449,8 @@ app.get("/debug/files", (req, res) => {
     cwd: process.cwd(),
     manifestExists: fs.existsSync(manifestPath),
     manifestPath,
-    companiesLoaded: companies.length
+    companiesLoaded: companies.length,
+    availableTools: ["search", "get_company"]
   });
 });
 
@@ -374,6 +531,7 @@ loadCSV(process.env.CSV_PATH || "./data/companies.csv")
       console.log("   POST /tools/call");
       console.log("   GET  /health");
       console.log("   GET  /debug/files");
+      console.log("   GET  /openapi.json");
     });
   })
   .catch((err) => {

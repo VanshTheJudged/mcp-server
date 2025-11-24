@@ -1,0 +1,81 @@
+openapi: 3.0.0
+info:
+  title: Company Search API
+  description: API for searching and filtering company data
+  version: 1.0.0
+servers:
+  - url: https://mcp-server-whjd.onrender.com
+    description: Production server
+
+paths:
+  /tools/call:
+    post:
+      summary: Execute a tool
+      operationId: callTool
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  enum: [search, get_company]
+                  description: The tool to execute
+                arguments:
+                  type: object
+                  description: Arguments for the tool
+            examples:
+              search:
+                value:
+                  name: search
+                  arguments:
+                    filters:
+                      - field: industry
+                        op: eq
+                        value: Software
+                    limit: 10
+              get_company:
+                value:
+                  name: get_company
+                  arguments:
+                    name: TechNova
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                        text:
+                          type: string
+
+components:
+  schemas:
+    SearchFilter:
+      type: object
+      required:
+        - field
+        - op
+        - value
+      properties:
+        field:
+          type: string
+          description: Field name to filter on
+        op:
+          type: string
+          enum: [eq, contains, gt, lt]
+          description: Filter operator
+        value:
+          description: Value to filter by

@@ -1,9 +1,17 @@
 {
-  "name": "company-mcp-server",
-  "version": "1.0.0",
-  "description": "A company filtering MCP server that allows searching and retrieving company data.",
-  "protocol": "mcp",
-  "capabilities": {
-    "tools": true
-  }
+  "schema_version": "v1",
+  "name_for_human": "Company Search",
+  "name_for_model": "company_search",
+  "description_for_human": "Search and filter company data",
+  "description_for_model": "A tool for searching companies using filters like industry, country, revenue, etc. Use the search tool to find companies matching specific criteria.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://mcp-server-whjd.onrender.com/openapi.yaml"
+  },
+  "logo_url": "https://via.placeholder.com/150",
+  "contact_email": "support@example.com",
+  "legal_info_url": "https://example.com/legal"
 }
