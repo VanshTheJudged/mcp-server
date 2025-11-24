@@ -14,6 +14,37 @@ app.use(express.json());
 app.use(cors());
 
 /* ------------------------------
+    ROOT & INFO ENDPOINTS
+--------------------------------*/
+
+// Root endpoint - ChatGPT checks this first
+app.get("/", (req, res) => {
+  res.json({
+    name: "Company MCP Server",
+    version: "1.0.0",
+    description: "A company filtering MCP server that allows searching and retrieving company data.",
+    endpoints: {
+      manifest: "/.well-known/manifest.json",
+      tools: "/tools",
+      call: "/tools/call",
+      health: "/health",
+      debug: "/debug/files"
+    },
+    status: "running",
+    companiesLoaded: companies.length
+  });
+});
+
+// Health check endpoint
+app.get("/health", (req, res) => {
+  res.json({ 
+    status: "healthy",
+    companiesLoaded: companies.length,
+    timestamp: new Date().toISOString()
+  });
+});
+
+/* ------------------------------
     MCP MANIFEST
 --------------------------------*/
 
@@ -337,9 +368,11 @@ loadCSV(process.env.CSV_PATH || "./data/companies.csv")
     app.listen(PORT, () => {
       console.log("🚀 MCP Server listening on port", PORT);
       console.log("📍 Endpoints:");
+      console.log("   GET  /");
       console.log("   GET  /.well-known/manifest.json");
       console.log("   GET  /tools");
       console.log("   POST /tools/call");
+      console.log("   GET  /health");
       console.log("   GET  /debug/files");
     });
   })
