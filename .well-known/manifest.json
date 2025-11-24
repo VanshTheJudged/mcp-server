@@ -1,21 +1,9 @@
 {
   "name": "company-mcp-server",
   "version": "1.0.0",
-  "description": "A company filtering MCP server.",
-  "servers": [
-    {
-      "type": "http",
-      "url": "https://mcp-server-whjd.onrender.com"
-    }
-  ],
-  "tools": [
-    {
-      "name": "search",
-      "description": "Search companies with filters"
-    },
-    {
-      "name": "get_company",
-      "description": "Get company by name or id"
-    }
-  ]
+  "description": "A company filtering MCP server that allows searching and retrieving company data.",
+  "protocol": "mcp",
+  "capabilities": {
+    "tools": true
+  }
 }
