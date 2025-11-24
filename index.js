@@ -28,6 +28,10 @@ app.use(cors());
            DEBUG CODE
 --------------------------------*/  
 
+/* ------------------------------
+    SERVE PLUGIN + OPENAPI + DEBUG
+--------------------------------*/
+
 app.get("/.well-known/ai-plugin.json", (req, res) => {
   const filePath = path.join(__dirname, ".well-known", "ai-plugin.json");
   console.log("Attempting to serve ai-plugin.json from:", filePath);
@@ -37,7 +41,13 @@ app.get("/.well-known/ai-plugin.json", (req, res) => {
     return res.status(404).json({ error: "ai-plugin.json not found" });
   }
   
-  res.sendFile(filePath);
+  try {
+    const content = JSON.parse(fs.readFileSync(filePath, "utf8"));
+    res.json(content);
+  } catch (err) {
+    console.error("Error reading ai-plugin.json:", err);
+    res.status(500).json({ error: "Failed to read file" });
+  }
 });
 
 app.get("/openapi.json", (req, res) => {
@@ -49,7 +59,13 @@ app.get("/openapi.json", (req, res) => {
     return res.status(404).json({ error: "openapi.json not found" });
   }
   
-  res.sendFile(filePath);
+  try {
+    const content = JSON.parse(fs.readFileSync(filePath, "utf8"));
+    res.json(content);
+  } catch (err) {
+    console.error("Error reading openapi.json:", err);
+    res.status(500).json({ error: "Failed to read file" });
+  }
 });
 
 app.get("/debug/files", (req, res) => {
