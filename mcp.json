@@ -16,11 +16,44 @@
   "tools": [
     {
       "name": "search",
-      "description": "Search companies with filters"
+      "description": "Search companies with filters",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "filters": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "field": { "type": "string" },
+                "op": { "type": "string", "enum": ["eq", "contains", "gt", "lt"] },
+                "value": {}
+              },
+              "required": ["field", "op", "value"]
+            }
+          },
+          "limit": { "type": "number" },
+          "offset": { "type": "number" },
+          "sort": {
+            "type": "object",
+            "properties": {
+              "field": { "type": "string" },
+              "dir": { "type": "string", "enum": ["asc", "desc"] }
+            }
+          }
+        }
+      }
     },
     {
-      "name": "get-company",
-      "description": "Get company by name or id"
+      "name": "get_company",
+      "description": "Get company by name or id",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "id": { "type": "string" }
+        }
+      }
     }
   ]
 }
