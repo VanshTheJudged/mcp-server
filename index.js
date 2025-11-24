@@ -32,8 +32,10 @@ app.use(cors());
     SERVE PLUGIN + OPENAPI + DEBUG
 --------------------------------*/
 
+import manifest from "./.well-known/manifest.json" assert { type: "json" };
+
 app.get("/.well-known/manifest.json", (req, res) => {
-  res.sendFile(path.join(process.cwd(), ".well-known", "manifest.json"));
+  res.json(manifest);
 });
 
 
