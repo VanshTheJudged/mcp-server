@@ -32,6 +32,11 @@ app.use(cors());
     SERVE PLUGIN + OPENAPI + DEBUG
 --------------------------------*/
 
+app.get("/.well-known/manifest.json", (req, res) => {
+  res.sendFile(path.join(process.cwd(), ".well-known", "manifest.json"));
+});
+
+
 app.get("/.well-known/ai-plugin.json", (req, res) => {
   const filePath = path.join(__dirname, ".well-known", "ai-plugin.json");
   console.log("Attempting to serve ai-plugin.json from:", filePath);
