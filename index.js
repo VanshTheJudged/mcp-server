@@ -152,3 +152,12 @@ loadCSV(process.env.CSV_PATH || "./data/companies.csv")
     process.exit(1);
   });
 ``
+import path from "path";
+
+app.get("/.well-known/ai-plugin.json", (req, res) => {
+  res.sendFile(path.join(process.cwd(), ".well-known", "ai-plugin.json"));
+});
+
+app.get("/openapi.json", (req, res) => {
+  res.sendFile(path.join(process.cwd(), "openapi.json"));
+});

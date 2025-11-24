@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Company Filter Engine",
+  "name_for_model": "company_filter_engine",
+  "description_for_human": "Search and retrieve company data using multiple filters.",
+  "description_for_model": "Provides two tools: search and get_company for company data stored in a CSV.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "/openapi.json",
+    "is_user_authenticated": false
+  },
+  "contact_email": "support@example.com",
+  "legal_info_url": "https://example.com/legal"
+}
