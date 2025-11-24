@@ -1,7 +1,6 @@
-// index.js
 import express from "express";
 import fs from "fs";
-import csvParser from "csv-parser"; // npm i csv-parser
+import csvParser from "csv-parser";
 import cors from "cors";
 
 import path from "path";
@@ -10,14 +9,27 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-
 const app = express();
 app.use(express.json());
 app.use(cors());
 
+/* ------------------------------
+    SERVE PLUGIN + OPENAPI
+--------------------------------*/
+app.get("/.well-known/ai-plugin.json", (req, res) => {
+  res.sendFile(path.join(process.cwd(), ".well-known", "ai-plugin.json"));
+});
+
+app.get("/openapi.json", (req, res) => {
+  res.sendFile(path.join(process.cwd(), "openapi.json"));
+});
+
+/* ------------------------------
+    CSV + FILTERS + ENDPOINTS
+--------------------------------*/
+
 let companies = [];
 
-// ---------- LOAD CSV ----------
 function loadCSV(path) {
   return new Promise((resolve, reject) => {
     const rows = [];
@@ -29,16 +41,14 @@ function loadCSV(path) {
   });
 }
 
-// convert string to number if possible
 function maybeNumber(v) {
   const n = Number(v);
   return Number.isFinite(n) ? n : v;
 }
 
-// ---------- FILTERING ----------
 function applyFilters(row, filters) {
   for (const f of filters) {
-    if (!(f.field in row)) continue; // ignore missing fields
+    if (!(f.field in row)) continue;
 
     const actual = row[f.field];
     const value = f.value;
@@ -47,16 +57,13 @@ function applyFilters(row, filters) {
       case "eq":
         if (actual != value) return false;
         break;
-
       case "contains":
         if (!actual || !actual.toLowerCase().includes(String(value).toLowerCase()))
           return false;
         break;
-
       case "gt":
         if (isNaN(actual) || Number(actual) <= Number(value)) return false;
         break;
-
       case "lt":
         if (isNaN(actual) || Number(actual) >= Number(value)) return false;
         break;
@@ -65,7 +72,6 @@ function applyFilters(row, filters) {
   return true;
 }
 
-// ---------- FILL MISSING FIELDS ----------
 function fillMissingFields(row) {
   const filled = {};
   for (const key of Object.keys(row)) {
@@ -77,7 +83,6 @@ function fillMissingFields(row) {
   return filled;
 }
 
-// ---------- /search ENDPOINT ----------
 app.post("/search", (req, res) => {
   const { filters = [], limit = 50, offset = 0, sort = null } = req.body;
 
@@ -104,7 +109,6 @@ app.post("/search", (req, res) => {
   });
 });
 
-// ---------- /get-company ENDPOINT ----------
 app.get("/get-company", (req, res) => {
   const { name, id } = req.query;
 
@@ -126,7 +130,6 @@ app.get("/get-company", (req, res) => {
   res.json({ company: fillMissingFields(found) });
 });
 
-// ---------- TOOL DISCOVERY ----------
 app.get("/tools/list", (req, res) => {
   res.json({
     tools: [
@@ -146,7 +149,10 @@ app.get("/tools/list", (req, res) => {
   });
 });
 
-// ---------- START SERVER ----------
+/* ------------------------------
+    SERVER START
+--------------------------------*/
+
 const PORT = process.env.PORT || 4000;
 loadCSV(process.env.CSV_PATH || "./data/companies.csv")
   .then((rows) => {
@@ -158,12 +164,3 @@ loadCSV(process.env.CSV_PATH || "./data/companies.csv")
     console.error("Failed to load CSV:", err);
     process.exit(1);
   });
-``
-
-app.get("/.well-known/ai-plugin.json", (req, res) => {
-  res.sendFile(path.join(process.cwd(), ".well-known", "ai-plugin.json"));
-});
-
-app.get("/openapi.json", (req, res) => {
-  res.sendFile(path.join(process.cwd(), "openapi.json"));
-});
