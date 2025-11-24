@@ -8,6 +8,7 @@
     "node-fetch": "^3.3.2",
     "ws": "^8.18.3"
   },
+  "type": "module",
   "name": "mcp-server",
   "version": "1.0.0",
   "main": "index.js",
