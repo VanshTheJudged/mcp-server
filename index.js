@@ -16,12 +16,54 @@ app.use(cors());
 /* ------------------------------
     SERVE PLUGIN + OPENAPI
 --------------------------------*/
+// app.get("/.well-known/ai-plugin.json", (req, res) => {
+//   res.sendFile(path.join(__dirname, ".well-known", "ai-plugin.json"));
+// });
+
+// app.get("/openapi.json", (req, res) => {
+//   res.sendFile(path.join(__dirname, "openapi.json"));
+// });
+
+/*--------------------------------
+           DEBUG CODE
+--------------------------------*/  
+
 app.get("/.well-known/ai-plugin.json", (req, res) => {
-  res.sendFile(path.join(process.cwd(), ".well-known", "ai-plugin.json"));
+  const filePath = path.join(__dirname, ".well-known", "ai-plugin.json");
+  console.log("Attempting to serve ai-plugin.json from:", filePath);
+  
+  if (!fs.existsSync(filePath)) {
+    console.error("File not found at:", filePath);
+    return res.status(404).json({ error: "ai-plugin.json not found" });
+  }
+  
+  res.sendFile(filePath);
 });
 
 app.get("/openapi.json", (req, res) => {
-  res.sendFile(path.join(process.cwd(), "openapi.json"));
+  const filePath = path.join(__dirname, "openapi.json");
+  console.log("Attempting to serve openapi.json from:", filePath);
+  
+  if (!fs.existsSync(filePath)) {
+    console.error("File not found at:", filePath);
+    return res.status(404).json({ error: "openapi.json not found" });
+  }
+  
+  res.sendFile(filePath);
+});
+
+app.get("/debug/files", (req, res) => {
+  const aiPluginPath = path.join(__dirname, ".well-known", "ai-plugin.json");
+  const openapiPath = path.join(__dirname, "openapi.json");
+  
+  res.json({
+    __dirname,
+    cwd: process.cwd(),
+    aiPluginExists: fs.existsSync(aiPluginPath),
+    openapiExists: fs.existsSync(openapiPath),
+    aiPluginPath,
+    openapiPath
+  });
 });
 
 /* ------------------------------
