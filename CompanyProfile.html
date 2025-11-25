@@ -39,12 +39,13 @@
         .green { background: #E3FAEA; color: #059669; }
         .pink { background: #FFE2F4; color: #D946EF; }
 
-        .legend { display: flex; gap: 20px; }
+        .legend { display: flex; gap: 20px; margin-bottom: 10px; }
         .dot { width: 14px; height: 14px; border-radius: 50%; }
         .dot.pink { background: #EC07B5; }
         .dot.green { background: #00C793; }
 
         .chart { height: 350px; margin-top: 20px; padding-left: 40px; }
+
         .about-card, .activity-section, .people-card {
             background: #ffffff;
             padding: 24px;
@@ -53,6 +54,7 @@
             max-width: 780px;
             margin: 30px auto;
         }
+
         .info-list { list-style: none; padding: 0; margin: 0; }
         .info-list li { display: flex; gap: 10px; margin-bottom: 10px; }
         .tag { padding: 8px 14px; background: #eef2f8; border-radius: 20px; font-size: 13px; }
@@ -118,74 +120,85 @@
     </div>
 
 <script>
-function waitForOpenAI() {
-    return new Promise(resolve => {
-        if (window.openai?.toolOutput) {
-            return resolve(window.openai.toolOutput);
+    function hydrate() {
+        const toolOutput = window?.openai?.toolOutput;
+        if (!toolOutput || !toolOutput.company) {
+            // No data yet – leave "Loading..." text
+            return;
         }
 
-        const interval = setInterval(() => {
-            if (window.openai?.toolOutput) {
-                clearInterval(interval);
-                resolve(window.openai.toolOutput);
-            }
-        }, 50);
-    });
-}
+        const c = toolOutput.company;
 
-async function init() {
-    const toolOutput = await waitForOpenAI();
-    const c = toolOutput.structuredContent.company;
+        // Basic safety so we don't show "undefined"
+        const safe = (v, fallback = "N/A") =>
+            v === undefined || v === null || v === "" || v === "no_data" ? fallback : v;
 
-    document.getElementById('companyName').textContent = c.company_name || "N/A";
-    document.getElementById('aboutName').textContent = c.company_name || "N/A";
-    document.getElementById('aboutDescription').textContent =
-        `${c.company_name} is a ${c.industry} company founded in ${c.year_founded}, based in ${c.country}.`;
+        document.getElementById('companyName').textContent = safe(c.company_name);
+        document.getElementById('aboutName').textContent = safe(c.company_name);
+        document.getElementById('aboutDescription').textContent =
+            `${safe(c.company_name)} is a ${safe(c.industry)} company founded in ${safe(c.year_founded)}, based in ${safe(c.country)}.`;
 
-    document.getElementById('foundedDate').textContent = c.year_founded;
-    document.getElementById('industry').textContent = c.industry;
-    document.getElementById('location').textContent = c.country;
-    document.getElementById('employees').textContent = c.employee_count;
-    document.getElementById('revenue').textContent = "$" + c.annual_revenue_usd;
-    document.getElementById('founderName').textContent = c.founder;
-    document.getElementById('peopleHeadcount').textContent = c.employee_count;
-    document.getElementById('peopleCountry').textContent = c.country;
-    document.getElementById('activityIndustry').textContent = c.industry;
+        document.getElementById('foundedDate').textContent = safe(c.year_founded);
+        document.getElementById('industry').textContent = safe(c.industry);
+        document.getElementById('location').textContent = safe(c.country);
+        document.getElementById('employees').textContent = safe(c.employee_count);
+        document.getElementById('revenue').textContent = safe(c.annual_revenue_usd ? `$${c.annual_revenue_usd}` : "N/A");
+        document.getElementById('founderName').textContent = safe(c.founder);
+        document.getElementById('peopleHeadcount').textContent = safe(c.employee_count);
+        document.getElementById('peopleCountry').textContent = safe(c.country);
+        document.getElementById('activityIndustry').textContent = safe(c.industry);
 
-    const website = document.getElementById('website');
-    website.href = c.website;
-    website.textContent = c.website;
+        const website = document.getElementById('website');
+        const url = safe(c.website, "");
+        if (url) {
+            website.href = url.startsWith("http") ? url : "https://" + url;
+            website.textContent = url.replace(/^https?:\/\//, "");
+        } else {
+            website.href = "#";
+            website.textContent = "N/A";
+        }
 
-    const tag = document.createElement("span");
-    tag.className = "tag";
-    tag.textContent = c.industry;
-    document.getElementById("tagsContainer").appendChild(tag);
+        const tagsContainer = document.getElementById("tagsContainer");
+        tagsContainer.innerHTML = "";
+        if (c.industry) {
+            const tag = document.createElement("span");
+            tag.className = "tag";
+            tag.textContent = c.industry;
+            tagsContainer.appendChild(tag);
+        }
 
-    new Chart(document.getElementById("myChart"), {
-        type: "line",
-        data: {
-            labels: ["Jan","Feb","Mar","Apr","May","Jun"],
-            datasets: [
-                {
-                    label: "Growth",
-                    data: [85, 88, 90, 92, 95, 98],
-                    borderColor: "#00C793",
-                    fill: false
-                },
-                {
-                    label: "Heat",
-                    data: [80, 83, 86, 88, 91, 93],
-                    borderColor: "#EC07B5",
-                    fill: false
+        // Chart
+        const ctx = document.getElementById("myChart");
+        if (ctx && !ctx._chartInstance) {
+            ctx._chartInstance = new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: ["Jan","Feb","Mar","Apr","May","Jun"],
+                    datasets: [
+                        {
+                            label: "Growth",
+                            data: [85, 88, 90, 92, 95, 98],
+                            borderColor: "#00C793",
+                            fill: false
+                        },
+                        {
+                            label: "Heat",
+                            data: [80, 83, 86, 88, 91, 93],
+                            borderColor: "#EC07B5",
+                            fill: false
+                        }
+                    ]
                 }
-            ]
+            });
         }
-    });
-}
+    }
 
-init();
+    // Initial render
+    document.addEventListener("DOMContentLoaded", hydrate);
+
+    // Re-render when ChatGPT updates globals (including toolOutput)
+    window.addEventListener("openai:set_globals", hydrate);
 </script>
-
 
 </body>
 </html>
