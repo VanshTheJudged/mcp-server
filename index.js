@@ -50,7 +50,6 @@ function applyFilters(row, filters) {
 
     const actual = row[field];
 
-    // Text operations
     if (op === "eq") {
       if (String(actual) !== String(value)) return false;
     } else if (op === "contains") {
@@ -59,9 +58,7 @@ function applyFilters(row, filters) {
       ) {
         return false;
       }
-    }
-    // Numeric operations (gt / lt)
-    else if (op === "gt" || op === "lt") {
+    } else if (op === "gt" || op === "lt") {
       const numActual = Number(actual);
       const numValue = Number(value);
       if (Number.isNaN(numActual) || Number.isNaN(numValue)) {
@@ -176,7 +173,8 @@ app.post("/mcp", async (req, res) => {
             tools: [
               {
                 name: "get_company",
-                description: "Get company by exact name.",
+                description:
+                  "Render a company profile UI card for a single company. The UI is self-contained; the assistant should not summarize the data in text.",
                 inputSchema: {
                   type: "object",
                   properties: {
@@ -201,14 +199,14 @@ app.post("/mcp", async (req, res) => {
               {
                 name: "search_companies",
                 description:
-                  "Search companies using dynamic filters on CSV columns (e.g., revenue, employees, industry, country). Filters with unknown fields are ignored.",
+                  "Search companies and render them in the table UI. The UI is self-contained; the assistant should not list or repeat the rows in text.",
                 inputSchema: {
                   type: "object",
                   properties: {
                     filters: {
                       type: "array",
                       description:
-                        "Array of filter conditions. Unknown fields are discarded.",
+                        "Array of filter conditions on CSV fields. Unknown fields are ignored.",
                       items: {
                         type: "object",
                         properties: {
@@ -266,7 +264,7 @@ app.post("/mcp", async (req, res) => {
       case "tools/call": {
         const { name, arguments: args } = params || {};
 
-        /* --- get_company (keep working behaviour) --- */
+        /* --- get_company --- */
         if (name === "get_company") {
           const target = args?.name?.toLowerCase().trim();
           if (!target) {
@@ -285,6 +283,7 @@ app.post("/mcp", async (req, res) => {
           );
 
           if (!found) {
+            // Still no UI here; but we return minimal text so the model can say something.
             return res.json({
               jsonrpc: "2.0",
               id,
@@ -299,25 +298,21 @@ app.post("/mcp", async (req, res) => {
             jsonrpc: "2.0",
             id,
             result: {
-              content: [
-                {
-                  type: "text",
-                  text: `Loaded company profile for **${found.company_name}**.`,
-                },
-              ],
+              // No human-facing content; UI handles display
+              content: [],
               structuredContent: {
                 company: found,
               },
               _meta: {
                 "openai/outputTemplate": "ui://company-profile",
-                "openai/toolInvocation/invoking": "Loading profile...",
-                "openai/toolInvocation/invoked": "Profile loaded.",
+                "openai/toolInvocation/invoking": "",
+                "openai/toolInvocation/invoked": "",
               },
             },
           });
         }
 
-        /* --- search_companies (new tool) --- */
+        /* --- search_companies --- */
         if (name === "search_companies") {
           const filters = Array.isArray(args?.filters) ? args.filters : [];
           const rawLimit =
@@ -339,15 +334,8 @@ app.post("/mcp", async (req, res) => {
             jsonrpc: "2.0",
             id,
             result: {
-              content: [
-                {
-                  type: "text",
-                  text:
-                    total === 0
-                      ? "No companies matched those filters."
-                      : `Found **${total}** companies. Showing **${page.length}** (offset ${offset}).`,
-                },
-              ],
+              // Again: no descriptive text, only UI data
+              content: [],
               structuredContent: {
                 results: page,
                 total,
@@ -356,14 +344,13 @@ app.post("/mcp", async (req, res) => {
               },
               _meta: {
                 "openai/outputTemplate": "ui://company-table",
-                "openai/toolInvocation/invoking": "Searching companies...",
-                "openai/toolInvocation/invoked": "Loaded search results.",
+                "openai/toolInvocation/invoking": "",
+                "openai/toolInvocation/invoked": "",
               },
             },
           });
         }
 
-        // Unknown tool
         return res.json({
           jsonrpc: "2.0",
           id,
