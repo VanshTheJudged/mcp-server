@@ -41,7 +41,8 @@ app.get("/", (req, res) => {
     endpoints: {
       mcp: "POST /mcp (MCP protocol endpoint)",
       health: "GET /health",
-      manifest: "GET /.well-known/manifest.json"
+      manifest: "GET /.well-known/manifest.json",
+      profile: "GET /company-profile (Company profile viewer)"
     },
     status: "running",
     companiesLoaded: companies.length
@@ -57,7 +58,16 @@ app.get("/health", (req, res) => {
 });
 
 /* ------------------------------
-    MCP PROTOCOL ENDPOINT - FIXED
+    SERVE COMPANY PROFILE HTML
+--------------------------------*/
+
+app.get("/company-profile", (req, res) => {
+  const htmlPath = path.join(__dirname, "CompanyProfile.html");
+  res.sendFile(htmlPath);
+});
+
+/* ------------------------------
+    MCP PROTOCOL ENDPOINT
 --------------------------------*/
 
 // This is the main endpoint ChatGPT connects to
@@ -215,6 +225,22 @@ app.post("/mcp", async (req, res) => {
             });
           }
           
+          // Build URL with query params for the profile page
+          const params = new URLSearchParams({
+            company_name: found.company_name || '',
+            industry: found.industry || '',
+            annual_revenue_usd: found.annual_revenue_usd || '',
+            employee_count: found.employee_count || '',
+            founder: found.founder || '',
+            country: found.country || '',
+            year_founded: found.year_founded || '',
+            website: found.website || ''
+          });
+          
+          const serverUrl = process.env.SERVER_URL || "https://mcp-server-whjd.onrender.com";
+          const profileUrl = `${serverUrl}/company-profile?${params.toString()}`;
+          
+          // Return iframe with the profile
           return res.json({
             jsonrpc: "2.0",
             id,
@@ -222,7 +248,7 @@ app.post("/mcp", async (req, res) => {
               content: [
                 {
                   type: "text",
-                  text: JSON.stringify(fillMissingFields(found), null, 2)
+                  text: `Here are the details I found for **${found.company_name}**:\n\n<iframe src="${profileUrl}" width="100%" height="800px" frameborder="0" style="border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"></iframe>\n\n🔗 [Open in new tab](${profileUrl})`
                 }
               ]
             }
@@ -360,6 +386,7 @@ loadCSV(CSV_PATH)
       console.log("\n🚀 MCP Server running!");
       console.log("   Port:", PORT);
       console.log("   MCP Endpoint:", `${SERVER_URL}/mcp`);
+      console.log("   Profile Viewer:", `${SERVER_URL}/company-profile`);
       console.log("\n📍 Use this URL in ChatGPT:");
       console.log("   " + `${SERVER_URL}/mcp`);
       console.log("\n💡 Setup in ChatGPT:");

@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">Company Profile</title>
+    <style>
+        /* Ripple Chart UI Styles */
+
+body {
+    font-family: Inter, Arial, sans-serif;
+    background: #f5f7fa;
+    margin: 0;
+    padding: 30px;
+}
+
+.card {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 14px;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
+    max-width: 780px;
+    margin: auto;
+}
+
+/* Header */
+.header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    background: #4C82F7;
+}
+
+h2 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+/* Funding Blur */
+.funding {
+    margin: 6px 0 18px 0;
+    font-size: 15px;
+    color: #444;
+}
+
+/* Score Boxes */
+.scores {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 18px;
+    transform: scale(1.10);
+    width: fit-content;
+}
+
+.score-box {
+    padding: 4px 7px;
+    border-radius: 10px;
+    font-size: 15px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+}
+
+.score-box.green {background: #E3FAEA; color: #059669; }
+.score-box.pink { background: #FFE2F4; color: #D946EF; }
+
+.score-box span {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* Legend */
+.legend {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 10px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+}
+
+.dot.pink { background: #EC07B5; }
+.dot.green { background: #00C793; }
+
+/* Chart */
+.chart {
+    position: relative;
+    height: 350px;
+    margin-top: 20px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.05), rgba(0,0,0,0));
+    border-radius: 10px;
+    overflow: hidden;
+    padding-left: 40px;
+}
+
+.y-axis {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    transform: rotate(-90deg);
+    transform-origin: left top;
+    font-size: 13px;
+    font-weight: 500;
+    color: #555;
+    opacity: 0.9;
+}
+
+.chart-bg {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, #fdfdff, #efeff7);
+    opacity: 0.5;
+}
+
+.about-card {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 14px;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
+    max-width: 780px;
+    margin: 30px auto 50px auto;
+}
+
+.about-card h3 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.cb-rank {
+    font-size: 15px;
+    margin-bottom: 14px;
+    font-weight: 600;
+}
+
+.rank-value {
+    background: #E3FAEA;
+    color: #059669;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-weight: 700;
+}
+
+.about-text {
+    font-size: 15px;
+    color: #444;
+    line-height: 1.5;
+    margin-bottom: 18px;
+}
+
+.info-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+}
+
+.info-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 15px;
+    color: #555;
+}
+
+.icon-box {
+    background: #eef2f8;
+    padding: 6px 8px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.socials {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.social-icon {
+    background: #eef2f8;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.tag {
+    background: #eef2f8;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #444;
+}
+
+.funding-section {
+    margin-top: 30px;
+    background: white;
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.05);
+}
+
+.funding-section h2 {
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+
+.funding-label,
+.investors-label {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 6px;
+}
+
+.funding-tag {
+    background: #DFF4FF;
+    width: max-content;
+    padding: 6px 12px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
+
+.investors-list {
+    font-size: 14px;
+    margin-bottom: 18px;
+}
+
+.total-funding-box {
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+    font-size: 15px;
+}
+
+.activity-section {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 14px;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
+    max-width: 780px;
+    margin: 30px auto;
+}
+
+.activity-section h3 {
+    font-size: 20px;
+    margin-bottom: 12px;
+}
+
+.activity-trending {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.activity-subtext {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 14px;
+}
+
+.activity-subtext .underline {
+    text-decoration: underline;
+}
+
+.activity-bar {
+    height: 10px;
+    background: linear-gradient(to right, #E6D9FB, #BB8CF8, #9B5CF3);
+    border-radius: 10px;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.activity-indicator {
+    position: absolute;
+    right: 12%;
+    top: -6px;
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 10px solid #6E3ECC;
+}
+
+.activity-scale {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #666;
+}
+
+.people-card {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 14px;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
+    max-width: 780px;
+    margin: 30px auto;
+}
+
+.people-card h3 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 18px;
+}
+
+.people-item {
+    background: #ffffff;
+    padding: 18px 20px;
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+    margin-bottom: 14px;
+}
+
+.people-label {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0 0 6px 0;
+}
+
+.people-value {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+}
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <div class="card">
+        <!-- Header -->
+        <div class="header">
+            <div class="icon"></div>
+            <h2 id="companyName">Loading...</h2> 
+        </div>
+
+        <div class="funding">
+            Total Funding 
+            <span class="blur-box" id="totalFunding">$$$$$</span>
+        </div>
+
+        <!-- Score Boxes -->
+        <div class="scores">
+            <div class="score-box green">Growth Score <span id="growth">98</span> ↑</div>
+            <div class="score-box pink">Heat Score <span id="heat" style="display:block;">93</span> ↑</div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item"><span class="dot pink"></span>Heat Score</div>
+            <div class="legend-item"><span class="dot green"></span>Growth Score</div>
+        </div>
+
+        <!-- Graph -->
+        <div class="chart">
+            <canvas id="myChart"></canvas>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <div class="about-card">
+        <h3>About <span id="aboutName">Company</span></h3>
+
+        <div class="cb-rank">
+            CB Rank <span class="rank-value" id="cbRank">--</span> ↑
+        </div>
+
+        <p class="about-text" id="aboutDescription">
+            Loading company information...
+        </p>
+
+        <!-- Icons & Info List -->
+        <ul class="info-list">
+            <li>
+                <span class="icon-box">📅</span>
+                Founded <span id="foundedDate">--</span>
+            </li>
+
+            <li>
+                <span class="icon-box">🚩</span>
+                <span id="companyType">--</span>
+            </li>
+
+            <li>
+                <span class="icon-box">🏢</span>
+                Industry: <span id="industry">--</span>
+            </li>
+
+            <li>
+                <span class="icon-box">📍</span>
+                <span id="location">--</span>
+            </li>
+
+            <li>
+                <span class="icon-box">👥</span>
+                <span id="employees">--</span> employees
+            </li>
+
+            <li>
+                <span class="icon-box">💰</span>
+                Revenue: <span id="revenue">--</span>
+            </li>
+
+            <li>
+                <span class="icon-box">🔗</span>
+                <a href="#" id="website" target="_blank">--</a>
+            </li>
+        </ul>
+
+        <!-- Social Icons -->
+        <div class="socials">
+            <span class="social-icon">📘</span>
+            <span class="social-icon">🟦</span>
+        </div>
+
+        <!-- Tags (will be populated dynamically) -->
+        <div class="tags" id="tagsContainer">
+        </div>
+    </div>
+
+    <!-- Activity Section -->
+    <div class="activity-section">
+        <h3>Company Profile Activity <span style="font-size:14px; opacity:0.7;">ℹ️</span></h3>
+        <div class="activity-trending">Trending</div>
+        <div class="activity-subtext">
+            Among all <span class="underline" id="activityIndustry">companies</span>
+        </div>
+        <div class="activity-bar">
+            <div class="activity-indicator"></div>
+        </div>
+        <div class="activity-scale">
+            <span>Low Activity</span>
+            <span>High Activity</span>
+        </div>
+    </div>
+
+    <!-- People Section -->
+    <div class="people-card">
+        <h3>People</h3>
+
+        <div class="people-item">
+            <p class="people-label">Headcount</p>
+            <p class="people-value" id="peopleHeadcount">--</p>
+        </div>
+
+        <div class="people-item">
+            <p class="people-label">Founder</p>
+            <p class="people-value" id="founderName">--</p>
+        </div>
+
+        <div class="people-item">
+            <p class="people-label">Location</p>
+            <p class="people-value" id="companyCountry">--</p>
+        </div>
+    </div>
+
+    <script>
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Helper function to format numbers
+        function formatNumber(num) {
+            if (!num || num === 'no_data') return 'Not Available';
+            return Number(num).toLocaleString();
+        }
+        
+        // Helper function to format currency
+        function formatCurrency(amount) {
+            if (!amount || amount === 'no_data') return 'Not Available';
+            return '$' + Number(amount).toLocaleString();
+        }
+
+        // Populate company data
+        const companyName = urlParams.get('company_name') || 'Company';
+        const industry = urlParams.get('industry') || 'Not Available';
+        const revenue = urlParams.get('annual_revenue_usd') || 'no_data';
+        const employees = urlParams.get('employee_count') || 'no_data';
+        const founder = urlParams.get('founder') || 'Not Available';
+        const country = urlParams.get('country') || 'Not Available';
+        const yearFounded = urlParams.get('year_founded') || 'Not Available';
+        const website = urlParams.get('website') || '#';
+
+        // Update page title
+        document.getElementById('pageTitle').textContent = companyName + ' Profile';
+        
+        // Update all elements
+        document.getElementById('companyName').textContent = companyName;
+        document.getElementById('aboutName').textContent = companyName;
+        document.getElementById('aboutDescription').textContent = 
+            `${companyName} is a ${industry} company founded in ${yearFounded}, operating in ${country}.`;
+        
+        document.getElementById('foundedDate').textContent = yearFounded;
+        document.getElementById('industry').textContent = industry;
+        document.getElementById('location').textContent = country;
+        document.getElementById('employees').textContent = formatNumber(employees);
+        document.getElementById('revenue').textContent = formatCurrency(revenue);
+        document.getElementById('founderName').textContent = founder;
+        document.getElementById('companyCountry').textContent = country;
+        document.getElementById('peopleHeadcount').textContent = formatNumber(employees);
+        document.getElementById('activityIndustry').textContent = industry;
+        
+        // Update website link
+        const websiteLink = document.getElementById('website');
+        if (website && website !== '#' && website !== 'no_data') {
+            websiteLink.href = website.startsWith('http') ? website : 'https://' + website;
+            websiteLink.textContent = website.replace(/^https?:\/\//, '');
+        } else {
+            websiteLink.textContent = 'Not Available';
+        }
+
+        // Add industry tag
+        if (industry && industry !== 'Not Available') {
+            const tagsContainer = document.getElementById('tagsContainer');
+            const tag = document.createElement('span');
+            tag.className = 'tag';
+            tag.textContent = industry;
+            tagsContainer.appendChild(tag);
+        }
+
+        // Initialize Chart.js
+        const ctx = document.getElementById('myChart');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [
+                        {
+                            label: 'Growth Score',
+                            data: [85, 88, 90, 92, 95, 98],
+                            borderColor: '#00C793',
+                            backgroundColor: 'rgba(0, 199, 147, 0.1)',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Heat Score',
+                            data: [80, 83, 86, 88, 91, 93],
+                            borderColor: '#EC07B5',
+                            backgroundColor: 'rgba(236, 7, 181, 0.1)',
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 70,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
