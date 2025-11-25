@@ -216,10 +216,6 @@ app.post("/tools/call", (req, res) => {
   res.status(400).json({ content: [{ type: "text", text: `Tool '${name}' not found` }], isError: true });
 });
 
-/* ------------------------------
-    MCP HELLO WORLD ENDPOINT
---------------------------------*/
-
 app.post("/mcp", (req, res) => {
   res.json({
     content: [
