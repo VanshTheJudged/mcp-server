@@ -216,7 +216,7 @@ app.post("/tools/call", (req, res) => {
   res.status(400).json({ content: [{ type: "text", text: `Tool '${name}' not found` }], isError: true });
 });
 
-app.post("/mcp", (req, res) => {
+app.get("/mcp", (req, res) => {
   res.json({
     content: [
       {
