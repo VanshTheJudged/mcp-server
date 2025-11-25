@@ -1,11 +1,100 @@
 company_name,industry,annual_revenue_usd,employee_count,founder,country,year_founded,website
-TechNova,Software,15000000,120,Arjun Mehra,India,2012,https://technova.com
-GreenLeaf Organics,Food & Agriculture,4200000,35,,USA,2018,https://greenleaf.com
-AeroSky Dynamics,Aerospace,98000000,540,Hiro Tanaka,Japan,2005,https://aeroskydynamics.jp
-HealthSphere Medical,Healthcare,25000000,210,Sara Kovac,Canada,2010,https://healthsphere.ca
-CryptoForge Labs,Blockchain,7300000,,Luis Romero,Spain,2019,
-EcoRide Mobility,Automotive,120000000,900,Elena Schmidt,Germany,2008,https://ecoride.de
-PixelWorks Studios,Entertainment,3500000,22,,UK,2020,https://pixelworks.uk
-DataSense Analytics,Data Science,17000000,150,Mehak Singh,India,2016,https://datasense.ai
-SunGrid Energy,Renewable Energy,54000000,300,,Australia,2014,https://sungrid.com.au
-OceanWare Shipping,Logistics,22000000,430,Ryan Patel,USA,1998,https://oceanwarelogistics.com
+Apple,Technology,383000000000,161000,Steve Jobs; Steve Wozniak; Ronald Wayne,United States,1976,https://www.apple.com
+Microsoft,Technology,227000000000,221000,Bill Gates; Paul Allen,United States,1975,https://www.microsoft.com
+Amazon,E-commerce,575000000000,1500000,Jeff Bezos,United States,1994,https://www.amazon.com
+Alphabet (Google),Technology,307000000000,182000,Larry Page; Sergey Brin,United States,1998,https://www.abc.xyz
+Meta Platforms,Technology,135000000000,67000,Mark Zuckerberg; Dustin Moskovitz; others,United States,2004,https://www.meta.com
+Tesla,Automotive,96300000000,140000,Elon Musk; JB Straubel; others,United States,2003,https://www.tesla.com
+Walmart,Retail,648000000000,2100000,Sam Walton,United States,1962,https://www.walmart.com
+ExxonMobil,Energy,344000000000,62000,John D. Rockefeller,United States,1999,https://corporate.exxonmobil.com
+Berkshire Hathaway,Conglomerate,364000000000,383000,Warren Buffett (current architect),United States,1839,https://www.berkshirehathaway.com
+Johnson & Johnson,Healthcare,85900000000,152000,Robert Wood Johnson I; others,United States,1886,https://www.jnj.com
+JPMorgan Chase,Financial Services,162000000000,310000,John Pierpont Morgan,United States,1799,https://www.jpmorganchase.com
+Bank of America,Financial Services,103000000000,217000,Amadeo Giannini,United States,1904,https://www.bankofamerica.com
+Wells Fargo,Financial Services,82800000000,230000,Henry Wells; William Fargo,United States,1852,https://www.wellsfargo.com
+Citigroup,Financial Services,78300000000,240000,Samuel Osgood (as Citi predecessor),United States,1812,https://www.citi.com
+Visa,Financial Services,32600000000,29000,Dee Hock,United States,1958,https://www.visa.com
+Mastercard,Financial Services,25800000000,34000,Multiple Banks (founding consortium),United States,1966,https://www.mastercard.com
+Home Depot,Retail,157000000000,475000,Bernard Marcus; Arthur Blank,United States,1978,https://www.homedepot.com
+Costco,Retail,242000000000,316000,James Sinegal; Jeffrey Brotman,United States,1983,https://www.costco.com
+Target,Retail,109000000000,450000,George Dayton,United States,1902,https://www.target.com
+CVS Health,Healthcare,358000000000,300000,Stanley Goldstein; others,United States,1963,https://www.cvs.com
+Pfizer,Healthcare,64900000000,83000,Charles Pfizer; Charles Erhart,United States,1849,https://www.pfizer.com
+Merck & Co,Healthcare,59700000000,68000,George Merck,United States,1891,https://www.merck.com
+Coca-Cola,Beverages,45700000000,79000,Asa Griggs Candler,United States,1892,https://www.coca-cola.com
+PepsiCo,Beverages,91400000000,318000,Caleb Bradham,United States,1898,https://www.pepsico.com
+McDonald's,Food Service,25200000000,200000,Ray Kroc (expander),United States,1955,https://www.mcdonalds.com
+Starbucks,Food Service,36000000000,381000,Jerry Baldwin; Gordon Bowker; Zev Siegl,United States,1971,https://www.starbucks.com
+Nike,Apparel,51300000000,83000,Phil Knight; Bill Bowerman,United States,1964,https://www.nike.com
+Adidas USA is German, so skipped,
+Intel,Technology,54300000000,131000,Gordon Moore; Robert Noyce,United States,1968,https://www.intel.com
+AMD,Technology,23400000000,26000,Jerry Sanders,United States,1969,https://www.amd.com
+NVIDIA,Technology,60900000000,29000,Jensen Huang; Chris Malachowsky; Curtis Priem,United States,1993,https://www.nvidia.com
+IBM,Technology,61400000000,288000,Charles Ranlett Flint,United States,1911,https://www.ibm.com
+Oracle,Technology,50800000000,164000,Larry Ellison; Bob Miner; Ed Oates,United States,1977,https://www.oracle.com
+Salesforce,Technology,34400000000,73000,Marc Benioff,United States,1999,https://www.salesforce.com
+Uber,Technology,37600000000,30000,Travis Kalanick; Garrett Camp,United States,2009,https://www.uber.com
+Lyft,Technology,4800000000,4600,Logan Green; John Zimmer,United States,2012,https://www.lyft.com
+Airbnb,Technology,9900000000,6700,Brian Chesky; Joe Gebbia; Nathan Blecharczyk,United States,2008,https://www.airbnb.com
+DoorDash,Technology,8700000000,15000,Tony Xu; others,United States,2013,https://www.doordash.com
+Disney,Entertainment,88800000000,225000,Walt Disney; Roy Disney,United States,1923,https://www.disney.com
+Netflix,Entertainment,33700000000,13000,Reed Hastings; Marc Randolph,United States,1997,https://www.netflix.com
+Warner Bros Discovery,Entertainment,43500000000,37000,Multiple founders,United States,1923,https://www.wbd.com
+Paramount Global,Entertainment,29500000000,24000,William Wadsworth; others,United States,1986,https://www.paramount.com
+Comcast,Telecom,121000000000,186000,Ralph J. Roberts,United States,1963,https://www.comcast.com
+AT&T,Telecom,122000000000,160000,Alexander Graham Bell (predecessor),United States,1885,https://www.att.com
+Verizon,Telecom,134000000000,117000,Bell Atlantic formation,United States,2000,https://www.verizon.com
+T-Mobile US,Telecom,79000000000,71000,Western Wireless (US identity),United States,1994,https://www.t-mobile.com
+Lockheed Martin,Defense,67800000000,122000,Glenn L. Martin; Allan Lockheed,United States,1995,https://www.lockheedmartin.com
+Raytheon Technologies,Defense,67400000000,182000,Vannevar Bush; others,United States,1922,https://www.rtx.com
+Northrop Grumman,Defense,39500000000,101000,John Northrop; Leroy Grumman,United States,1939,https://www.northropgrumman.com
+Boeing,Aerospace,77700000000,170000,William Boeing,United States,1916,https://www.boeing.com
+SpaceX,Aerospace,9000000000,13000,Elon Musk,United States,2002,https://www.spacex.com
+Delta Air Lines,Aviation,58300000000,95000,Collett E. Woolman,United States,1925,https://www.delta.com
+United Airlines,Aviation,53000000000,100000,William Boeing (predecessor),United States,1931,https://www.united.com
+American Airlines,Aviation,52800000000,130000,C.R. Smith,United States,1930,https://www.aa.com
+Southwest Airlines,Aviation,26500000000,66000,Herb Kelleher; Rollin King,United States,1967,https://www.southwest.com
+FedEx,Logistics,90600000000,530000,Frederick W. Smith,United States,1971,https://www.fedex.com
+UPS,Logistics,91200000000,500000,James Casey,United States,1907,https://www.ups.com
+3M,Manufacturing,34000000000,92000,Danley Budd; others,United States,1902,https://www.3m.com
+Caterpillar,Manufacturing,67600000000,113000,Benjamin Holt; C. Best,United States,1925,https://www.caterpillar.com
+General Electric,Conglomerate,68000000000,168000,Thomas Edison (predecessor),United States,1892,https://www.ge.com
+Ford Motor Company,Automotive,176000000000,173000,Henry Ford,United States,1903,https://www.ford.com
+General Motors,Automotive,171000000000,163000,William Durant,United States,1908,https://www.gm.com
+Rivian,Automotive,4200000000,14000,RJ Scaringe,United States,2009,https://www.rivian.com
+Lucid Motors,Automotive,595000000,6000,Bernard Tse; Sam Weng,United States,2007,https://www.lucidmotors.com
+Hewlett Packard Enterprise,Technology,29000000000,62000,Bill Hewlett; Dave Packard,United States,2015 (split),https://www.hpe.com
+HP Inc,Technology,53600000000,58000,Bill Hewlett; Dave Packard,United States,1939,https://www.hp.com
+Qualcomm,Technology,36500000000,51000,Irwin Jacobs; Andrew Viterbi,United States,1985,https://www.qualcomm.com
+Broadcom,Technology,35500000000,20000,Henry Samueli (US founder of Broadcom),United States,1991,https://www.broadcom.com
+Texas Instruments,Technology,18000000000,33000,Cecil Green; others,United States,1930,https://www.ti.com
+Snowflake,Technology,2600000000,6200,Benoit Dageville; others,United States,2012,https://www.snowflake.com
+Adobe,Technology,19100000000,29000,John Warnock; Charles Geschke,United States,1982,https://www.adobe.com
+Intuit,Technology,14300000000,18000,Scott Cook; Tom Proulx,United States,1983,https://www.intuit.com
+PayPal,Technology,29600000000,30000,Peter Thiel; Max Levchin; others,United States,1998,https://www.paypal.com
+Square (Block),Technology,20800000000,12000,Jack Dorsey; Jim McKelvey,United States,2009,https://www.block.xyz
+Stripe,Fintech,0 (private est. >$2B),8000,Patrick Collison; John Collison,United States,2010,https://www.stripe.com
+Coinbase,Crypto,3200000000,3500,Brian Armstrong; Fred Ehrsam,United States,2012,https://www.coinbase.com
+Goldman Sachs,Financial Services,47000000000,45000,Marcus Goldman,United States,1869,https://www.goldmansachs.com
+Morgan Stanley,Financial Services,54000000000,70000,Henry S. Morgan; Harold Stanley,United States,1935,https://www.morganstanley.com
+BlackRock,Financial Services,18000000000,19000,Larry Fink; others,United States,1988,https://www.blackrock.com
+Blackstone,Financial Services,10500000000,4300,Stephen Schwarzman; Peter Peterson,United States,1985,https://www.blackstone.com
+Kroger,Retail,149000000000,430000,Bernard Kroger,United States,1883,https://www.kroger.com
+Marriott International,Hospitality,22000000000,140000,J. Willard Marriott,United States,1927,https://www.marriott.com
+Hilton Hotels,Hospitality,8900000000,173000Conrad Hilton,United States,1919,https://www.hilton.com
+Uber Freight,Logistics,7000000000,4500,Uber division,United States,2017,https://www.uberfreight.com
+Intuitive Surgical,Medical Devices,7100000000,13100,Fred Moll; others,United States,1995,https://www.intuitive.com
+Medtronic USA division,Medical Devices,31500000000,95000,Earl Bakken (US founder),United States,1949,https://www.medtronic.com
+Amgen,Biotech,26600000000,26000,George Rathmann,United States,1980,https://www.amgen.com
+Gilead Sciences,Biotech,27000000000,17000,Michael Riordan,United States,1987,https://www.gilead.com
+Biogen,Biotech,11300000000,9200,Walter Gilbert; others,United States,1978,https://www.biogen.com
+Regeneron,Biotech,12600000000,13000,Leonard Schleifer; George Yancopoulos,United States,1988,https://www.regeneron.com
+Charles Schwab,Financial Services,20200000000,35000,Charles R. Schwab,United States,1971,https://www.schwab.com
+Robinhood,Fintech,1900000000,2800,Vlad Tenev; Baiju Bhatt,United States,2013,https://www.robinhood.com
+Zoom Video,Technology,4200000000,9500,Eric Yuan,United States,2011,https://www.zoom.us
+Slack (Salesforce),Technology,900000000,2000,Stewart Butterfield,United States,2009,https://slack.com
+GitHub (Microsoft),Technology,1000000000,3000,Chris Wanstrath; others,United States,2008,https://github.com
+Twilio,Technology,4200000000,7900,Jeff Lawson,United States,2008,https://www.twilio.com
+HubSpot,Technology,2100000000,7800,Brian Halligan; Dharmesh Shah,United States,2006,https://www.hubspot.com
+Etsy,E-commerce,2600000000,2800,Rob Kalin; others,United States,2005,https://www.etsy.com
+eBay,E-commerce,10500000000,11800,Pierre Omidyar,United States,1995,https://www.ebay.com
