@@ -1,59 +1,13 @@
 {
-  "name": "company-mcp-server",
-  "version": "1.0.0",
-  "description": "A company filtering MCP server.",
-  "server": {
-    "command": "node",
-    "args": ["index.js"],
-    "env": {
-      "CSV_PATH": "./data/companies.csv"
-    }
-  },
-  "transport": {
-    "type": "http",
-    "url": "https://mcp-server-whjd.onrender.com"
-  },
+  "name": "hello-world-mcp",
+  "version": "0.0.1",
   "tools": [
     {
-      "name": "search",
-      "description": "Search companies with filters",
-      "input_schema": {
-        "type": "object",
-        "properties": {
-          "filters": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "field": { "type": "string" },
-                "op": { "type": "string", "enum": ["eq", "contains", "gt", "lt"] },
-                "value": {}
-              },
-              "required": ["field", "op", "value"]
-            }
-          },
-          "limit": { "type": "number" },
-          "offset": { "type": "number" },
-          "sort": {
-            "type": "object",
-            "properties": {
-              "field": { "type": "string" },
-              "dir": { "type": "string", "enum": ["asc", "desc"] }
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "get_company",
-      "description": "Get company by name or id",
-      "input_schema": {
-        "type": "object",
-        "properties": {
-          "name": { "type": "string" },
-          "id": { "type": "string" }
-        }
-      }
+      "name": "hello",
+      "description": "Prints Hello World",
+      "input_schema": {},
+      "output_schema": "string",
+      "handler": "return 'Hello World';"
     }
   ]
 }

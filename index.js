@@ -76,37 +76,15 @@ app.get("/openapi.json", (req, res) => {
                       items: {
                         type: "object",
                         properties: {
-                          field: {
-                            type: "string",
-                            description: "Field name (company_name, industry, country, annual_revenue_usd, employee_count, year_founded)"
-                          },
-                          op: {
-                            type: "string",
-                            enum: ["eq", "contains", "gt", "lt"],
-                            description: "Operator: eq=equals, contains=text search, gt=greater than, lt=less than"
-                          },
-                          value: {
-                            oneOf: [
-                              { type: "string" },
-                              { type: "number" }
-                            ],
-                            description: "Value to filter by"
-                          }
+                          field: { type: "string" },
+                          op: { type: "string", enum: ["eq", "contains", "gt", "lt"] },
+                          value: { oneOf: [{ type: "string" }, { type: "number" }] }
                         },
                         required: ["field", "op", "value"]
                       }
                     },
-                    limit: {
-                      type: "integer",
-                      default: 10,
-                      minimum: 1,
-                      maximum: 100
-                    },
-                    offset: {
-                      type: "integer",
-                      default: 0,
-                      minimum: 0
-                    }
+                    limit: { type: "integer", default: 10, minimum: 1, maximum: 100 },
+                    offset: { type: "integer", default: 0, minimum: 0 }
                   }
                 }
               }
@@ -120,12 +98,8 @@ app.get("/openapi.json", (req, res) => {
                   schema: {
                     type: "object",
                     properties: {
-                      total: {
-                        type: "integer"
-                      },
-                      showing: {
-                        type: "integer"
-                      },
+                      total: { type: "integer" },
+                      showing: { type: "integer" },
                       results: {
                         type: "array",
                         items: {
@@ -156,41 +130,11 @@ app.get("/openapi.json", (req, res) => {
           operationId: "getCompany",
           summary: "Get a specific company by name",
           parameters: [
-            {
-              name: "name",
-              in: "query",
-              required: true,
-              schema: {
-                type: "string"
-              },
-              description: "Exact company name",
-              example: "TechNova"
-            }
+            { name: "name", in: "query", required: true, schema: { type: "string" } }
           ],
           responses: {
-            "200": {
-              description: "Company details",
-              content: {
-                "application/json": {
-                  schema: {
-                    type: "object",
-                    properties: {
-                      company_name: { type: "string" },
-                      industry: { type: "string" },
-                      annual_revenue_usd: { type: "string" },
-                      employee_count: { type: "string" },
-                      founder: { type: "string" },
-                      country: { type: "string" },
-                      year_founded: { type: "string" },
-                      website: { type: "string" }
-                    }
-                  }
-                }
-              }
-            },
-            "404": {
-              description: "Company not found"
-            }
+            "200": { description: "Company details" },
+            "404": { description: "Company not found" }
           }
         }
       }
@@ -202,21 +146,12 @@ app.get("/openapi.json", (req, res) => {
     CHATGPT ACTIONS ENDPOINTS
 --------------------------------*/
 
-// Endpoint for searching companies
 app.post("/search-companies", (req, res) => {
-  console.log("========================================");
-  console.log("🔍 SEARCH COMPANIES ENDPOINT");
-  console.log("Request body:", JSON.stringify(req.body, null, 2));
-  console.log("========================================");
-
   const { filters = [], limit = 10, offset = 0 } = req.body;
 
   let matched = companies.filter((row) => applyFilters(row, filters));
   matched = matched.map((r) => fillMissingFields(r));
-
   const page = matched.slice(offset, offset + limit);
-
-  console.log(`✅ Returning ${page.length} of ${matched.length} results`);
 
   res.json({
     total: matched.length,
@@ -225,46 +160,24 @@ app.post("/search-companies", (req, res) => {
   });
 });
 
-// Endpoint for getting a specific company
 app.get("/company", (req, res) => {
-  console.log("========================================");
-  console.log("🏢 GET COMPANY ENDPOINT");
-  console.log("Query params:", req.query);
-  console.log("========================================");
-
   const { name } = req.query;
+  if (!name) return res.status(400).json({ error: "Company name is required" });
 
-  if (!name) {
-    return res.status(400).json({ error: "Company name is required" });
-  }
+  const found = companies.find(c => (c.company_name || "").toLowerCase().trim() === name.toLowerCase().trim());
+  if (!found) return res.status(404).json({ error: "Company not found" });
 
-  const found = companies.find(
-    (c) =>
-      (c.company_name || "")
-        .toLowerCase()
-        .trim() === name.toLowerCase().trim()
-  );
-
-  if (!found) {
-    console.log("❌ Company not found:", name);
-    return res.status(404).json({ error: "Company not found" });
-  }
-
-  console.log("✅ Company found:", found.company_name);
   res.json(fillMissingFields(found));
 });
 
 /* ------------------------------
-    MCP PROTOCOL ENDPOINTS (Optional - for other clients)
+    MCP PROTOCOL ENDPOINTS
 --------------------------------*/
 
 app.get("/.well-known/manifest.json", (req, res) => {
   const filePath = path.join(__dirname, ".well-known", "manifest.json");
-  
-  if (!fs.existsSync(filePath)) {
-    return res.status(404).json({ error: "manifest.json not found" });
-  }
-  
+  if (!fs.existsSync(filePath)) return res.status(404).json({ error: "manifest.json not found" });
+
   try {
     const content = JSON.parse(fs.readFileSync(filePath, "utf8"));
     res.json(content);
@@ -276,28 +189,8 @@ app.get("/.well-known/manifest.json", (req, res) => {
 app.get("/tools", (req, res) => {
   res.json({
     tools: [
-      {
-        name: "search",
-        description: "Search companies with filters",
-        inputSchema: {
-          type: "object",
-          properties: {
-            filters: { type: "array" },
-            limit: { type: "number" },
-            offset: { type: "number" }
-          }
-        }
-      },
-      {
-        name: "get_company",
-        description: "Get company by name",
-        inputSchema: {
-          type: "object",
-          properties: {
-            name: { type: "string" }
-          }
-        }
-      }
+      { name: "search", description: "Search companies", inputSchema: { type: "object", properties: { filters: { type: "array" }, limit: { type: "number" }, offset: { type: "number" } } } },
+      { name: "get_company", description: "Get company by name", inputSchema: { type: "object", properties: { name: { type: "string" } } } }
     ]
   });
 });
@@ -310,26 +203,32 @@ app.post("/tools/call", (req, res) => {
     let matched = companies.filter((row) => applyFilters(row, filters));
     matched = matched.map((r) => fillMissingFields(r));
     const page = matched.slice(offset, offset + limit);
-    
-    return res.json({
-      content: [{ type: "text", text: JSON.stringify({ total: matched.length, showing: page.length, results: page }, null, 2) }]
-    });
+    return res.json({ content: [{ type: "text", text: JSON.stringify({ total: matched.length, showing: page.length, results: page }, null, 2) }] });
   }
-  
+
   if (name === "get_company") {
     const { name: companyName } = args || {};
-    const found = companies.find(
-      (c) => (c.company_name || "").toLowerCase().trim() === companyName.toLowerCase().trim()
-    );
-    
-    if (!found) {
-      return res.json({ content: [{ type: "text", text: "Company not found" }], isError: true });
-    }
-    
+    const found = companies.find(c => (c.company_name || "").toLowerCase().trim() === companyName.toLowerCase().trim());
+    if (!found) return res.json({ content: [{ type: "text", text: "Company not found" }], isError: true });
     return res.json({ content: [{ type: "text", text: JSON.stringify(fillMissingFields(found), null, 2) }] });
   }
-  
+
   res.status(400).json({ content: [{ type: "text", text: `Tool '${name}' not found` }], isError: true });
+});
+
+/* ------------------------------
+    MCP HELLO WORLD ENDPOINT
+--------------------------------*/
+
+app.post("/mcp", (req, res) => {
+  res.json({
+    content: [
+      {
+        type: "text",
+        text: "Hello World"
+      }
+    ]
+  });
 });
 
 /* ------------------------------
@@ -357,24 +256,13 @@ function maybeNumber(v) {
 function applyFilters(row, filters) {
   for (const f of filters) {
     if (!(f.field in row)) continue;
-
     const actual = row[f.field];
     const value = f.value;
-
     switch (f.op) {
-      case "eq":
-        if (actual != value) return false;
-        break;
-      case "contains":
-        if (!actual || !actual.toLowerCase().includes(String(value).toLowerCase()))
-          return false;
-        break;
-      case "gt":
-        if (isNaN(actual) || Number(actual) <= Number(value)) return false;
-        break;
-      case "lt":
-        if (isNaN(actual) || Number(actual) >= Number(value)) return false;
-        break;
+      case "eq": if (actual != value) return false; break;
+      case "contains": if (!actual || !actual.toLowerCase().includes(String(value).toLowerCase())) return false; break;
+      case "gt": if (isNaN(actual) || Number(actual) <= Number(value)) return false; break;
+      case "lt": if (isNaN(actual) || Number(actual) >= Number(value)) return false; break;
     }
   }
   return true;
@@ -403,6 +291,7 @@ loadCSV(process.env.CSV_PATH || "./data/companies.csv")
       console.log("   POST /search-companies");
       console.log("   GET  /company");
       console.log("   GET  /openapi.json");
+      console.log("   POST /mcp (Hello World)");
     });
   })
   .catch((err) => {
