@@ -120,18 +120,17 @@
     </div>
 
 <script>
-    function hydrate() {
+    function hydrateProfile() {
         const toolOutput = window?.openai?.toolOutput;
         if (!toolOutput || !toolOutput.company) {
-            // No data yet – leave "Loading..." text
             return;
         }
 
         const c = toolOutput.company;
-
-        // Basic safety so we don't show "undefined"
         const safe = (v, fallback = "N/A") =>
             v === undefined || v === null || v === "" || v === "no_data" ? fallback : v;
+
+        document.getElementById('pageTitle').textContent = `${safe(c.company_name)} Profile`;
 
         document.getElementById('companyName').textContent = safe(c.company_name);
         document.getElementById('aboutName').textContent = safe(c.company_name);
@@ -142,7 +141,9 @@
         document.getElementById('industry').textContent = safe(c.industry);
         document.getElementById('location').textContent = safe(c.country);
         document.getElementById('employees').textContent = safe(c.employee_count);
-        document.getElementById('revenue').textContent = safe(c.annual_revenue_usd ? `$${c.annual_revenue_usd}` : "N/A");
+        document.getElementById('revenue').textContent = safe(
+            c.annual_revenue_usd ? `$${c.annual_revenue_usd}` : "N/A"
+        );
         document.getElementById('founderName').textContent = safe(c.founder);
         document.getElementById('peopleHeadcount').textContent = safe(c.employee_count);
         document.getElementById('peopleCountry').textContent = safe(c.country);
@@ -167,7 +168,6 @@
             tagsContainer.appendChild(tag);
         }
 
-        // Chart
         const ctx = document.getElementById("myChart");
         if (ctx && !ctx._chartInstance) {
             ctx._chartInstance = new Chart(ctx, {
@@ -193,11 +193,8 @@
         }
     }
 
-    // Initial render
-    document.addEventListener("DOMContentLoaded", hydrate);
-
-    // Re-render when ChatGPT updates globals (including toolOutput)
-    window.addEventListener("openai:set_globals", hydrate);
+    document.addEventListener("DOMContentLoaded", hydrateProfile);
+    window.addEventListener("openai:set_globals", hydrateProfile);
 </script>
 
 </body>

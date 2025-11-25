@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Company Search Results</title>
+<style>
+    :root{
+        --bg:#fafafa;
+        --card:#fff;
+        --muted:#6b7280;
+        --accent:#1f2937;
+        --border:#e6e9ee;
+    }
+    body {
+        font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+        background: var(--bg);
+        margin: 0;
+        padding: 28px;
+        color: var(--accent);
+    }
+    .card {
+        background: var(--card);
+        border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(18,24,34,0.06);
+        padding: 18px;
+    }
+    .topbar {
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:12px;
+        margin-bottom:14px;
+    }
+    .results-count{
+        font-weight:600;
+        color:var(--accent);
+        font-size:14px;
+    }
+    .controls { display:flex; gap:10px; align-items:center; }
+    .btn {
+        background: #fff;
+        border:1px solid var(--border);
+        padding:8px 12px;
+        border-radius:8px;
+        font-weight:600;
+        cursor:pointer;
+        box-shadow: 0 1px 0 rgba(16,24,40,0.03);
+        font-size:13px;
+    }
+    .btn.primary{ background:rgba(255, 216, 128,0.5); border-color: #f0bb52; }
+    .btn.icon{ padding:8px; width:40px; height:40px; display:inline-flex; align-items:center; justify-content:center; }
+    .table-wrap{ overflow:auto; max-height:600px; }
+    table {
+        width:100%;
+        border-collapse:collapse;
+        min-width:900px;
+    }
+    th, td{
+        text-align:left;
+        padding:14px 12px;
+        font-size:14px;
+        vertical-align:middle;
+    }
+    thead th{
+        color:var(--muted);
+        font-weight:700;
+        border-bottom:1px solid var(--border);
+        background:#f9fafb;
+    }
+    tbody tr{ background:transparent; }
+    tbody tr:hover{ background: rgba(15,23,42,0.02); }
+    .dot{ width:16px; height:16px; border-radius:50%; display:inline-block; margin-right:10px; }
+    .org-name{ font-weight:700; }
+    .desc{ color:#6b7280; max-width:320px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .cb-cell{ width:48px; }
+    .rank{ font-weight:700; color:#374151; text-align:right; }
+    @media (max-width:780px){
+        body{ padding:12px; }
+        table{ min-width:700px; }
+    }
+</style>
+</head>
+<body>
+
+<div class="card">
+    <div class="topbar">
+        <div style="display:flex;align-items:center;gap:14px;">
+            <div class="results-count" id="resultsCount">0 results</div>
+            <div style="color:var(--muted); font-size:13px;" id="resultsSubtext"></div>
+        </div>
+        <div class="top-controls">
+            <button class="btn primary">Save Search</button>
+            <button class="btn">Connect To CRM</button>
+            <button class="btn">Export</button>
+            <button class="btn icon" title="More">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="5" cy="12" r="2" fill="#374151"/>
+                    <circle cx="12" cy="12" r="2" fill="#374151"/>
+                    <circle cx="19" cy="12" r="2" fill="#374151"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th class="cb-cell"><input type="checkbox" aria-label="select all"></th>
+                <th>Organization Name</th>
+                <th>Industries</th>
+                <th>Founded Date</th>
+                <th>Headquarters Location</th>
+                <th>Description</th>
+                <th style="text-align:right;">CB Rank</th>
+            </tr>
+        </thead>
+        <tbody id="company-table-body">
+            <!-- Rows injected by JS -->
+        </tbody>
+    </table>
+    </div>
+</div>
+
+<script>
+    const DOT_COLORS = ["#ef4444","#7c3aed","#16a34a","#111827","#f59e0b","#0ea5e9"];
+
+    function safe(val, fallback = "—") {
+        if (val === undefined || val === null || val === "" || val === "no_data") return fallback;
+        return val;
+    }
+
+    function hydrateTable() {
+        const toolOutput = window?.openai?.toolOutput;
+        if (!toolOutput) return;
+
+        const results = Array.isArray(toolOutput.results) ? toolOutput.results : [];
+        const total = typeof toolOutput.total === "number" ? toolOutput.total : results.length;
+        const limit = toolOutput.limit ?? results.length;
+        const offset = toolOutput.offset ?? 0;
+
+        const resultsCount = document.getElementById("resultsCount");
+        const resultsSubtext = document.getElementById("resultsSubtext");
+        const tbody = document.getElementById("company-table-body");
+
+        tbody.innerHTML = "";
+
+        if (results.length === 0) {
+            resultsCount.textContent = "0 results";
+            resultsSubtext.textContent = "No companies matched those filters.";
+            return;
+        }
+
+        const start = offset + 1;
+        const end = offset + results.length;
+        resultsCount.textContent = `${start}-${end} of ${total} results`;
+        resultsSubtext.textContent = "";
+
+        results.forEach((c, idx) => {
+            const tr = document.createElement("tr");
+
+            const dotColor = DOT_COLORS[idx % DOT_COLORS.length];
+
+            tr.innerHTML = `
+                <td class="cb-cell"><input type="checkbox" aria-label="select row"></td>
+                <td>
+                    <span class="dot" style="background:${dotColor}"></span>
+                    <span class="org-name">${safe(c.company_name)}</span>
+                </td>
+                <td>${safe(c.industry)}</td>
+                <td>${safe(c.year_founded)}</td>
+                <td>${safe(c.headquarters_location || c.country)}</td>
+                <td class="desc">${safe(c.description)}</td>
+                <td class="rank">${safe(c.cb_rank || c.cb_rank_org || "")}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", hydrateTable);
+    window.addEventListener("openai:set_globals", hydrateTable);
+</script>
+
+</body>
+</html>
