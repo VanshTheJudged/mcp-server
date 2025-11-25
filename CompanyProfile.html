@@ -118,61 +118,74 @@
     </div>
 
 <script>
-    function getCompany() {
-        return window?.openai?.toolOutput?.structuredContent?.company || {};
-    }
+function waitForOpenAI() {
+    return new Promise(resolve => {
+        if (window.openai?.toolOutput) {
+            return resolve(window.openai.toolOutput);
+        }
 
-    function init() {
-        const c = getCompany();
-
-        document.getElementById('companyName').textContent = c.company_name || "N/A";
-        document.getElementById('aboutName').textContent = c.company_name || "N/A";
-        document.getElementById('aboutDescription').textContent =
-            `${c.company_name} is a ${c.industry} company founded in ${c.year_founded}, based in ${c.country}.`
-
-        document.getElementById('foundedDate').textContent = c.year_founded;
-        document.getElementById('industry').textContent = c.industry;
-        document.getElementById('location').textContent = c.country;
-        document.getElementById('employees').textContent = c.employee_count;
-        document.getElementById('revenue').textContent = "$" + c.annual_revenue_usd;
-        document.getElementById('founderName').textContent = c.founder;
-        document.getElementById('peopleHeadcount').textContent = c.employee_count;
-        document.getElementById('peopleCountry').textContent = c.country;
-        document.getElementById('activityIndustry').textContent = c.industry;
-
-        const website = document.getElementById('website');
-        website.href = c.website;
-        website.textContent = c.website;
-
-        const tag = document.createElement("span");
-        tag.className = "tag";
-        tag.textContent = c.industry;
-        document.getElementById("tagsContainer").appendChild(tag);
-
-        new Chart(document.getElementById("myChart"), {
-            type: "line",
-            data: {
-                labels: ["Jan","Feb","Mar","Apr","May","Jun"],
-                datasets: [
-                    {
-                        label: "Growth",
-                        data: [85, 88, 90, 92, 95, 98],
-                        borderColor: "#00C793",
-                        fill: false
-                    },
-                    {
-                        label: "Heat",
-                        data: [80, 83, 86, 88, 91, 93],
-                        borderColor: "#EC07B5",
-                        fill: false
-                    }
-                ]
+        const interval = setInterval(() => {
+            if (window.openai?.toolOutput) {
+                clearInterval(interval);
+                resolve(window.openai.toolOutput);
             }
-        });
-    }
+        }, 50);
+    });
+}
 
-    document.addEventListener("DOMContentLoaded", init);
+async function init() {
+    const toolOutput = await waitForOpenAI();
+    const c = toolOutput.structuredContent.company;
+
+    document.getElementById('companyName').textContent = c.company_name || "N/A";
+    document.getElementById('aboutName').textContent = c.company_name || "N/A";
+    document.getElementById('aboutDescription').textContent =
+        `${c.company_name} is a ${c.industry} company founded in ${c.year_founded}, based in ${c.country}.`;
+
+    document.getElementById('foundedDate').textContent = c.year_founded;
+    document.getElementById('industry').textContent = c.industry;
+    document.getElementById('location').textContent = c.country;
+    document.getElementById('employees').textContent = c.employee_count;
+    document.getElementById('revenue').textContent = "$" + c.annual_revenue_usd;
+    document.getElementById('founderName').textContent = c.founder;
+    document.getElementById('peopleHeadcount').textContent = c.employee_count;
+    document.getElementById('peopleCountry').textContent = c.country;
+    document.getElementById('activityIndustry').textContent = c.industry;
+
+    const website = document.getElementById('website');
+    website.href = c.website;
+    website.textContent = c.website;
+
+    const tag = document.createElement("span");
+    tag.className = "tag";
+    tag.textContent = c.industry;
+    document.getElementById("tagsContainer").appendChild(tag);
+
+    new Chart(document.getElementById("myChart"), {
+        type: "line",
+        data: {
+            labels: ["Jan","Feb","Mar","Apr","May","Jun"],
+            datasets: [
+                {
+                    label: "Growth",
+                    data: [85, 88, 90, 92, 95, 98],
+                    borderColor: "#00C793",
+                    fill: false
+                },
+                {
+                    label: "Heat",
+                    data: [80, 83, 86, 88, 91, 93],
+                    borderColor: "#EC07B5",
+                    fill: false
+                }
+            ]
+        }
+    });
+}
+
+init();
 </script>
+
 
 </body>
 </html>
